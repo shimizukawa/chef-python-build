@@ -19,7 +19,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
       interpreter "ruby"
       code <<-EOH
         require 'open-uri'
-        open(archive_src, 'rb') do |input|
+        open("#{archive_src}", 'rb') do |input|
           open("#{archive_dir}/#{archive_file}", 'wb') do |output|
             while data = input.read(8192) do
               output.write(data)
