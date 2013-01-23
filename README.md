@@ -1,5 +1,5 @@
-chefenv Cookbook
-================
+python-build Cookbook
+======================
 
 This cookbook build and install python versions from official source.
 
@@ -12,7 +12,7 @@ Requirements
 Attributes
 ----------
 
-#### chefenv::default
+#### python-build::default
 <table>
   <tr>
     <th>Key</th>
@@ -48,15 +48,15 @@ Attributes
 
 Usage
 -----
-#### chefenv::default
+#### python-build::default
 
-Just include `chefenv` in your node's `run_list`:
+Just include `python-build` in your node's `run_list`:
 
 ```json
 {
   "name":"my_node",
   "run_list": [
-    "recipe[build-python]"
+    "recipe[python-build]"
   ],
   "override_attributes" : {
     "python_build": {
