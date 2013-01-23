@@ -28,13 +28,14 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
       cwd "#{archive_dir}/Python-#{version}"
       command "./configure --prefix=#{install_prefix}"
       not_if "test -f #{archive_dir}/Python-#{version}/Makefile"
-      notifies :run, "cookbook_file[place-python-#{version}-setup.cfg]"
+      notifies :create_if_missing, "cookbook_file[place-python-#{version}-setup.cfg]"
     end
 
     cookbook_file "place-python-#{version}-setup.cfg" do
+      action :create_if_missing
+      #action :nothing
       path "#{archive_dir}/Python-#{version}/setup.cfg"
       source 'setup.cfg'
-      action :create_if_missing
       notifies :run, "execute[make-python-#{version}]"
     end
 
