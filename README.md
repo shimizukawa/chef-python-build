@@ -21,34 +21,10 @@ Attributes
     <th>Default</th>
   </tr>
   <tr>
-    <td><tt>['python_build']['name']</tt></td>
-    <td>string</td>
-    <td>TODO</td>
-    <td><tt>'2.7.3'</tt></td>
-  </tr>
-  <tr>
-    <td><tt>['python_build']['owner']</tt></td>
-    <td>string</td>
-    <td>build working owner</td>
-    <td><tt>'root'</tt></td>
-  </tr>
-  <tr>
-    <td><tt>['python_build']['archive_dir']</tt></td>
-    <td>string</td>
-    <td>archive storing directory</td>
-    <td><tt>'/root/src'</tt></td>
-  </tr>
-  <tr>
     <td><tt>['python_build']['install_prefix']</tt></td>
     <td>string</td>
     <td>install path prefix</td>
     <td><tt>'/usr/local'</tt></td>
-  </tr>
-  <tr>
-    <td><tt>['python_build']['action']</tt></td>
-    <td>string</td>
-    <td>build</td>
-    <td><tt>''</tt></td>
   </tr>
   <tr>
     <td><tt>['python_build']['versions']</tt></td>

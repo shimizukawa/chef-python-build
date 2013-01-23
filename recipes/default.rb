@@ -33,8 +33,6 @@ package "pypy"              #for sphinx test
 node.python_build.versions.each do |version|
   python_build version do
     version
-    owner          node.python_build.owner
-    archive_dir    node.python_build.archive_dir
     install_prefix node.python_build.install_prefix
   end
 

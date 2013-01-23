@@ -1,7 +1,7 @@
-# Cookbook Name:: redmine
-# Attributes:: redmine
+# Cookbook Name:: python-version
+# Attributes:: default
 #
-# Copyright 2009, Opscode, Inc
+# Copyright 2013, Takayuki SHIMIZUKAWA.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,10 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-default[:python_build][:name] = '2.7.3'
-default[:python_build][:owner] = 'root'
-default[:python_build][:archive_dir] = "/root/src"
 default[:python_build][:install_prefix] = '/usr/local'
-default[:python_build][:action] = 'build'
 default[:python_build][:versions] = ['2.7.3']
 default[:python_build][:packages] = []
