@@ -6,5 +6,5 @@ cookbook 'build-essential'
 
 # external
 
-cookbook 'build-python',
-  :git => 'https://github.com/shimizukawa/chef-build-python'
+cookbook 'python-build',
+  :git => 'https://github.com/shimizukawa/chef-python-build'
