@@ -15,10 +15,19 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
 
   case params[:action]
   when :build
-    remote_file archive_file do
-      action :create_if_missing
-      path "#{archive_dir}/#{archive_file}"
-      source archive_src
+    script "Download #{archive_file}" do
+      interpreter "ruby"
+      code <<-EOH
+        require 'open-uri'
+        open(archive_src, 'rb') do |input|
+          open("#{archive_dir}/#{archive_file}", 'wb') do |output|
+            while data = input.read(8192) do
+              output.write(data)
+            end
+          end
+        end
+      EOH
+
       notifies :run, "execute[extract-python-#{version}]"
     end
 
