@@ -3,6 +3,13 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
   version = params[:name]
   archive_dir = Chef::Config[:file_cache_path]
   archive_file = "Python-#{version}.tar.bz2"
+  if node[:python_build][:archive_url_base]
+    #TODO: want to use string templating (it can use with ruby 1.9)
+    archive_src = "#{node[:python_build][:archive_url_base]}/#{archive_file}"
+  else
+    archive_src = "http://www.python.org/ftp/python/#{version}/#{archive_file}"
+  end
+
   install_prefix = params[:install_prefix]
   install_target = "#{install_prefix}/bin/python#{version.split('.')[0,2].join('.')}"
 
@@ -11,7 +18,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
     remote_file archive_file do
       action :create_if_missing
       path "#{archive_dir}/#{archive_file}"
-      source "http://www.python.org/ftp/python/#{version}/#{archive_file}"
+      source archive_src
       notifies :run, "execute[extract-python-#{version}]"
     end
 

@@ -21,6 +21,12 @@ Attributes
     <th>Default</th>
   </tr>
   <tr>
+    <td><tt>['python_build']['archive_url_base']</tt></td>
+    <td>string</td>
+    <td>Python source file location. python official site is default.</td>
+    <td><tt>nil</tt></td>
+  </tr>
+  <tr>
     <td><tt>['python_build']['install_prefix']</tt></td>
     <td>string</td>
     <td>install path prefix</td>
