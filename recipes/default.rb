@@ -31,10 +31,17 @@ package "gettext"           #for sphinx test
 package "pypy"              #for sphinx test
 
 node.python_build.versions.each do |version|
-  python_build version
+  python_build version do
+    version
+    owner          node.python_build.owner
+    archive_dir    node.python_build.archive_dir
+    install_prefix node.python_build.install_prefix
+  end
+
   node.python_build.packages.each do |package|
     python_package package do
-      version version
+      python_version version
+      python_prefix  node.python_build.install_prefix
     end
   end
 end

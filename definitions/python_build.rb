@@ -1,8 +1,8 @@
 
-define :python_build, :action => :build, :owner => 'root' do
+define :python_build, :action => :build, :owner => 'root', :archive_dir => '/root/src', :install_prefix => '/usr/local' do
   version = params[:name]
   owner = params[:owner]
-  archive_dir = params[:archive_dir] || "/home/#{owner}/src"
+  archive_dir = params[:archive_dir]
   archive_file = "Python-#{version}.tar.bz2"
   install_prefix = params[:install_prefix]
   install_target = "#{install_prefix}/bin/python#{version.split('.')[0,2].join('.')}"

@@ -1,8 +1,8 @@
 
-define :python_package, :action => :install, :version => nil do
+define :python_package, :action => :install, :python_version => nil, :python_prefix => '/usr/local' do
   package = params[:name]
-  version = params[:version] || ''
-  major_version = "#{version.split('.')[0,2].join('.')}"
+  python_version = params[:python_version] || ''
+  major_version = "#{python_version.split('.')[0,2].join('.')}"
   python_prefix = params[:python_prefix] || '/usr/local'
   python_bin = "#{python_prefix}/bin/python#{major_version}"
   easy_install = 'easy_install'
