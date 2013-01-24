@@ -28,6 +28,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
         end
       EOH
 
+      not_if "test -f #{archive_dir}/#{archive_file}"
       notifies :run, "execute[extract-python-#{version}]"
     end
 
