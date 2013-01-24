@@ -27,8 +27,8 @@ package 'sqlite3'           #for python
 #pakcage 'tk-dev'           #for python, not found on ubuntu-12.04?
 package "libjpeg62-dev"     #for PIL
 
-package "gettext"           #for sphinx test
-package "pypy"              #for sphinx test
+#TODO: lxml
+#TODO: mod_wsgi
 
 node.python_build.versions.each do |version|
   python_build version do
