@@ -6,8 +6,8 @@ This cookbook build and install python versions from official source.
 Requirements
 ------------
 
-#### packages
-- `build-essentials` - building python needs gcc and related headers.
+#### cookbook
+- `build-essential` - building python needs gcc and related headers.
 
 Attributes
 ----------
