@@ -28,7 +28,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
         end
       EOH
 
-      not_if "test -f #{archive_dir}/#{archive_file}"
+      not_if "test -f #{archive_dir}/#{archive_file} -o -f #{install_target}"
       notifies :run, "execute[extract-python-#{version}]"
     end
 
@@ -36,7 +36,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
       #action :nothing
       cwd archive_dir
       command "tar jxf #{archive_file}"
-      not_if "test -d #{archive_dir}/Python-#{version}"
+      not_if "test -d #{archive_dir}/Python-#{version} -o -f #{install_target}"
       notifies :run, "execute[configure-python-#{version}]"
     end
 
@@ -44,7 +44,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
       #action :nothing
       cwd "#{archive_dir}/Python-#{version}"
       command "./configure --prefix=#{install_prefix}"
-      not_if "test -f #{archive_dir}/Python-#{version}/Makefile"
+      not_if "test -f #{archive_dir}/Python-#{version}/Makefile -o -f #{install_target}"
       notifies :create_if_missing, "cookbook_file[place-python-#{version}-setup.cfg]"
     end
 
@@ -53,6 +53,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
       #action :nothing
       path "#{archive_dir}/Python-#{version}/setup.cfg"
       source 'setup.cfg'
+      not_if {File.exists?(install_target)}
       notifies :run, "execute[make-python-#{version}]"
     end
 
