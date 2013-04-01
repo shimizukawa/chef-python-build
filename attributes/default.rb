@@ -19,3 +19,32 @@ default["python_build"]["archive_url_base"] = nil
 default["python_build"]["install_prefix"] = '/usr/local'
 default["python_build"]["versions"] = ['2.7.3']
 default["python_build"]["packages"] = []
+
+case node["platform_family"]
+when "debian"
+  default["python_build"]["depends_libraries"] = [
+    'libsqlite3-dev',
+    'libreadline6-dev',
+    'libgdbm-dev',
+    'zlib1g-dev',
+    'libbz2-dev',
+    'sqlite3',
+    'libjpeg62-dev',
+  ]
+
+#TODO: freetype for PIL (centos: 'freetype-devel')
+#TODO: tk-dev  # not found on ubuntu-12.04?
+#TODO: lxml
+#TODO: mod_wsgi
+
+when "rhel", "fedora", "suse"
+  default["python_build"]["depends_libraries"] = [
+    'sqlite-devel',
+    'readline-devel',
+    'gdbm-devel',
+    'zlib-devel',
+    'bzip2-devel',
+    'libjpeg-devel',
+    #'sqlite3', #what package name on centos? and is this need?
+  ]
+end

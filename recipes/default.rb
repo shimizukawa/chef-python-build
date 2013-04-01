@@ -18,17 +18,9 @@
 #
 require_recipe 'build-essential'
 
-package 'libsqlite3-dev'    #for python
-package 'libreadline6-dev'  #for python
-package 'libgdbm-dev'       #for python
-package 'zlib1g-dev'        #for python
-package 'libbz2-dev'        #for python
-package 'sqlite3'           #for python
-#pakcage 'tk-dev'           #for python, not found on ubuntu-12.04?
-package "libjpeg62-dev"     #for PIL
-
-#TODO: lxml
-#TODO: mod_wsgi
+node.python_build.depends_libraries.each do |name|
+  package name
+end
 
 node.python_build.versions.each do |version|
   python_build version do
