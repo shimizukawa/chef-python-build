@@ -30,6 +30,7 @@ when "debian"
     'libbz2-dev',
     'sqlite3',
     'libjpeg62-dev',
+    'libfreetype6-dev',
   ]
 
 #TODO: freetype for PIL (centos: 'freetype-devel')
@@ -45,6 +46,7 @@ when "rhel", "fedora", "suse"
     'zlib-devel',
     'bzip2-devel',
     'libjpeg-devel',
+    'freetype-devel',
     #'sqlite3', #what package name on centos? and is this need?
   ]
 end
