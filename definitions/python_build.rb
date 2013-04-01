@@ -3,9 +3,9 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
   version = params[:name]
   archive_dir = Chef::Config[:file_cache_path]
   archive_file = "Python-#{version}.tar.bz2"
-  if node[:python_build][:archive_url_base]
+  if node["python_build"]["archive_url_base"]
     #TODO: want to use string templating (it can use with ruby 1.9)
-    archive_src = "#{node[:python_build][:archive_url_base]}/#{archive_file}"
+    archive_src = "#{node["python_build"]["archive_url_base"]}/#{archive_file}"
   else
     archive_src = "http://www.python.org/ftp/python/#{version}/#{archive_file}"
   end

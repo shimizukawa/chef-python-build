@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-default[:python_build][:archive_url_base] = nil
-default[:python_build][:install_prefix] = '/usr/local'
-default[:python_build][:versions] = ['2.7.3']
-default[:python_build][:packages] = []
+default["python_build"]["archive_url_base"] = nil
+default["python_build"]["install_prefix"] = '/usr/local'
+default["python_build"]["versions"] = ['2.7.3']
+default["python_build"]["packages"] = []
