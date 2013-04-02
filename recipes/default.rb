@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-require_recipe 'build-essential'
+include_recipe 'build-essential'
 
 node.python_build.depends_libraries.each do |name|
   package name
