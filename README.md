@@ -44,6 +44,18 @@ Attributes
     <td>install python 3rd-party package list. 'distribute' is installed by default.</td>
     <td><tt>[]</tt></td>
   </tr>
+  <tr>
+    <td><tt>['python_build']['owner']</tt></td>
+    <td>string</td>
+    <td>install file/directory owner.</td>
+    <td><tt>'root'</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['python_build']['group']</tt></td>
+    <td>string</td>
+    <td>install file/directory group.</td>
+    <td><tt>'root'</tt></td>
+  </tr>
 </table>
 
 Usage

@@ -1,6 +1,8 @@
 
-define :python_build, :action => :build, :install_prefix => '/usr/local' do
+define :python_build, :action => :build, :install_prefix => '/usr/local', :owner => 'root', :group => 'group' do
   version = params[:name]
+  owner = params[:owner]
+  group = params[:group]
   archive_dir = Chef::Config[:file_cache_path]
   archive_file = "Python-#{version}.tar.bz2"
   if node["python_build"]["archive_url_base"]
@@ -28,6 +30,8 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
         end
       EOH
 
+      user owner
+      group group
       not_if "test -f #{archive_dir}/#{archive_file} -o -f #{install_target}"
       notifies :run, "execute[extract-python-#{version}]"
     end
@@ -36,6 +40,8 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
       #action :nothing
       cwd archive_dir
       command "tar jxf #{archive_file}"
+      user owner
+      group group
       not_if "test -d #{archive_dir}/Python-#{version} -o -f #{install_target}"
       notifies :run, "execute[configure-python-#{version}]"
     end
@@ -44,6 +50,8 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
       #action :nothing
       cwd "#{archive_dir}/Python-#{version}"
       command "./configure --prefix=#{install_prefix}"
+      user owner
+      group group
       not_if "test -f #{archive_dir}/Python-#{version}/Makefile -o -f #{install_target}"
       notifies :create_if_missing, "cookbook_file[place-python-#{version}-setup.cfg]"
     end
@@ -53,6 +61,8 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
       #action :nothing
       path "#{archive_dir}/Python-#{version}/setup.cfg"
       source 'setup.cfg'
+      owner owner
+      group group
       not_if {File.exists?(install_target)}
       notifies :run, "execute[make-python-#{version}]"
     end
@@ -61,6 +71,8 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
       #action :nothing
       cwd "#{archive_dir}/Python-#{version}"
       command "make"
+      user owner
+      group group
       not_if {File.exists?(install_target)}
       notifies :run, "execute[make-install-python-#{version}]"
     end
@@ -69,6 +81,8 @@ define :python_build, :action => :build, :install_prefix => '/usr/local' do
       #action :nothing
       cwd "#{archive_dir}/Python-#{version}"
       command "make install"
+      user owner
+      group group
       not_if {File.exists?(install_target)}
     end
 

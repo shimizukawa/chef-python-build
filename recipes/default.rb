@@ -26,12 +26,16 @@ node.python_build.versions.each do |version|
   python_build version do
     version
     install_prefix node.python_build.install_prefix
+    owner node.python_build.owner
+    group node.python_build.group
   end
 
   node.python_build.packages.each do |package|
     python_package package do
       python_version version
       python_prefix  node.python_build.install_prefix
+      owner node.python_build.owner
+      group node.python_build.group
     end
   end
 end
