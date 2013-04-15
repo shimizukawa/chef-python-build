@@ -1,0 +1,6 @@
+[build_ext]
+<%- if node['kernel']['machine'] =~ /x86_64/ -%>
+library-dirs = /usr/lib/x86_64-linux-gnu
+<%- else -%>
+library-dirs = /usr/lib/i386-linux-gnu
+<%- end -%>

@@ -53,14 +53,14 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
       user owner
       group group
       not_if "test -f #{archive_dir}/Python-#{version}/Makefile -o -f #{install_target}"
-      notifies :create_if_missing, "cookbook_file[place-python-#{version}-setup.cfg]"
+      notifies :create_if_missing, "template[place-python-#{version}-setup.cfg]"
     end
 
-    cookbook_file "place-python-#{version}-setup.cfg" do
-      action :create_if_missing
+    template "place-python-#{version}-setup.cfg" do
+      action :create
       #action :nothing
       path "#{archive_dir}/Python-#{version}/setup.cfg"
-      source 'setup.cfg'
+      source 'setup.cfg.erb'
       owner owner
       group group
       not_if {File.exists?(install_target)}
