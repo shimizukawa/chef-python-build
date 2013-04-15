@@ -42,6 +42,7 @@ when "debian"
 
 when "rhel", "fedora", "suse"
   default["python_build"]["depends_libraries"] = [
+    'openssl-devel',
     'sqlite-devel',
     'readline-devel',
     'gdbm-devel',
