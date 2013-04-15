@@ -21,40 +21,40 @@ Attributes
     <th>Default</th>
   </tr>
   <tr>
-    <td><tt>['python_build']['archive_url_base']</tt></td>
+    <td><tt>["python_build"]["archive_url_base"]</tt></td>
     <td>string</td>
     <td>Python source file location. python official site is default.</td>
     <td><tt>nil</tt></td>
   </tr>
   <tr>
-    <td><tt>['python_build']['install_prefix']</tt></td>
+    <td><tt>["python_build"]["install_prefix"]</tt></td>
     <td>string</td>
     <td>install path prefix</td>
-    <td><tt>'/usr/local'</tt></td>
+    <td><tt>"/usr/local"</tt></td>
   </tr>
   <tr>
-    <td><tt>['python_build']['versions']</tt></td>
+    <td><tt>["python_build"]["versions"]</tt></td>
     <td>string</td>
     <td>install versions list. If you want to specify default version of python then it place last of the list. for example: `"versions": ["2.5.6", "3.3.1", "2.7.3"]`</td>
     <td><tt>[]</tt></td>
   </tr>
   <tr>
-    <td><tt>['python_build']['packages']</tt></td>
+    <td><tt>["python_build"]["packages"]</tt></td>
     <td>string</td>
-    <td>install python 3rd-party package list. 'distribute' is installed by default.</td>
+    <td>install python 3rd-party package list. "distribute" is installed by default.</td>
     <td><tt>[]</tt></td>
   </tr>
   <tr>
-    <td><tt>['python_build']['owner']</tt></td>
+    <td><tt>["python_build"]["owner"]</tt></td>
     <td>string</td>
     <td>install file/directory owner.</td>
-    <td><tt>'root'</tt></td>
+    <td><tt>"root"</tt></td>
   </tr>
   <tr>
-    <td><tt>['python_build']['group']</tt></td>
+    <td><tt>["python_build"]["group"]</tt></td>
     <td>string</td>
     <td>install file/directory group.</td>
-    <td><tt>'root'</tt></td>
+    <td><tt>"root"</tt></td>
   </tr>
 </table>
 
