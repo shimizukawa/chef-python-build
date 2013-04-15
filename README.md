@@ -35,8 +35,8 @@ Attributes
   <tr>
     <td><tt>['python_build']['versions']</tt></td>
     <td>string</td>
-    <td>install versions list. If you want to specify default version of python then it place last of the list.</td>
-    <td><tt>['2.7.3']</tt></td>
+    <td>install versions list. If you want to specify default version of python then it place last of the list. for example: `"versions": ["2.5.6", "3.3.1", "2.7.3"]`</td>
+    <td><tt>[]</tt></td>
   </tr>
   <tr>
     <td><tt>['python_build']['packages']</tt></td>
