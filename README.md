@@ -1,7 +1,8 @@
 python-build Cookbook
 ======================
 
-This cookbook build and install python versions from official source.
+This cookbook build and install several python versions from official source.
+Python-2.4, 2.5, 2.6, 2.7, 3.0, 3.1, 3.2, 3.3. however 3.0 is limited work with 'packages' attribute.
 
 Requirements
 ------------
@@ -29,31 +30,31 @@ Attributes
   <tr>
     <td><tt>["python_build"]["install_prefix"]</tt></td>
     <td>string</td>
-    <td>install path prefix</td>
+    <td>Install path prefix</td>
     <td><tt>"/usr/local"</tt></td>
   </tr>
   <tr>
     <td><tt>["python_build"]["versions"]</tt></td>
     <td>string</td>
-    <td>install versions list. If you want to specify default version of python then it place last of the list. for example: `"versions": ["2.5.6", "3.3.1", "2.7.3"]`</td>
+    <td>Install versions list. If you want to specify default version of python then it place last of the list. for example: `"versions": ["2.5.6", "3.3.1", "2.7.3"]`</td>
     <td><tt>[]</tt></td>
   </tr>
   <tr>
     <td><tt>["python_build"]["packages"]</tt></td>
     <td>string</td>
-    <td>install python 3rd-party package list. "distribute" is installed by default.</td>
+    <td>Install python 3rd-party package list. "distribute" will install by default. BTW distribute did not support Python-3.0 then this feature did not work when specify '3.0.x' in versions.</td>
     <td><tt>[]</tt></td>
   </tr>
   <tr>
     <td><tt>["python_build"]["owner"]</tt></td>
     <td>string</td>
-    <td>install file/directory owner.</td>
+    <td>Install file/directory owner.</td>
     <td><tt>"root"</tt></td>
   </tr>
   <tr>
     <td><tt>["python_build"]["group"]</tt></td>
     <td>string</td>
-    <td>install file/directory group.</td>
+    <td>Install file/directory group.</td>
     <td><tt>"root"</tt></td>
   </tr>
 </table>
@@ -62,7 +63,7 @@ Usage
 -----
 #### python-build::default
 
-Just include `python-build` in your node's `run_list`:
+Include `python-build` in your node's `run_list` and specify `python_build` attributes:
 
 ```json
 {
