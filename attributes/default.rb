@@ -45,11 +45,13 @@ when "rhel", "fedora", "suse"
     'openssl-devel',
     'sqlite-devel',
     'readline-devel',
-    'gdbm-devel',
     'zlib-devel',
     'bzip2-devel',
     'libjpeg-devel',
     'freetype-devel',
     #'sqlite3', #what package name on centos? and is this need?
   ]
+  unless node["platform"] == 'redhat' && node["platform_version"][0] == '6'
+    default["python_build"]["depends_libraries"] << 'gdbm-devel'
+  end
 end
