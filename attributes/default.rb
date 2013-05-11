@@ -36,7 +36,6 @@ when "debian"
     'libfreetype6-dev',
   ]
 
-#TODO: freetype for PIL (centos: 'freetype-devel')
 #TODO: tk-dev  # not found on ubuntu-12.04?
 #TODO: lxml
 #TODO: mod_wsgi
