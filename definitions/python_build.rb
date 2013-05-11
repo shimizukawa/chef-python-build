@@ -15,6 +15,15 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
   install_prefix = params[:install_prefix]
   install_target = "#{install_prefix}/bin/python#{version.split('.')[0,2].join('.')}"
 
+  expected_python = Proc.new{|target, expected_version|
+    if File.exists?(target)
+      actual_version = IO.popen("#{target} -V 2>&1", "w+") {|f| f.read}.split.last
+      actual_version == expected_version
+    else
+      false
+    end
+  }
+
   case params[:action]
   when :build
     script "Download #{archive_file}" do
@@ -32,7 +41,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
 
       user owner
       group group
-      not_if "test -f #{archive_dir}/#{archive_file} -o -f #{install_target}"
+      not_if {File.exists?("#{archive_dir}/#{archive_file}") || expected_python.call(install_target, version)}
       notifies :run, "execute[extract-python-#{version}]"
     end
 
@@ -42,7 +51,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
       command "tar jxf #{archive_file}"
       user owner
       group group
-      not_if "test -d #{archive_dir}/Python-#{version} -o -f #{install_target}"
+      not_if {File.exists?("#{archive_dir}/Python-#{version}") || expected_python.call(install_target, version)}
       notifies :run, "execute[configure-python-#{version}]"
     end
 
@@ -52,7 +61,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
       command "./configure --prefix=#{install_prefix}"
       user owner
       group group
-      not_if "test -f #{archive_dir}/Python-#{version}/Makefile -o -f #{install_target}"
+      not_if {File.exists?("#{archive_dir}/Python-#{version}/Makefile") || expected_python.call(install_target, version)}
       notifies :create_if_missing, "template[place-python-#{version}-setup.cfg]"
     end
 
@@ -63,7 +72,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
       source 'setup.cfg.erb'
       owner owner
       group group
-      not_if {File.exists?(install_target)}
+      not_if {expected_python.call(install_target, version)}
       notifies :run, "execute[make-python-#{version}]"
     end
 
@@ -73,7 +82,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
       command "make"
       user owner
       group group
-      not_if {File.exists?(install_target)}
+      not_if {expected_python.call(install_target, version)}
       notifies :run, "execute[make-install-python-#{version}]"
     end
 
@@ -83,7 +92,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
       command "make install"
       user owner
       group group
-      not_if {File.exists?(install_target)}
+      not_if {expected_python.call(install_target, version)}
     end
 
   end
