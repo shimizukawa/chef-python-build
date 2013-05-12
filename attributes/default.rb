@@ -25,7 +25,7 @@ default["python_build"]["group"] = "root"
 case node["platform_family"]
 when "debian"
   default["python_build"]["depends_libraries"] = [
-    'libssl-dev',
+    'openssl',
     'libsqlite3-dev',
     'libreadline6-dev',
     'libgdbm-dev',

@@ -1,0 +1,201 @@
+# HG changeset patch
+# User Victor Stinner <victor.stinner@haypocalc.com>
+# Date 1304985123 -7200
+# Node ID 3c87a13980be8deddd9f151c3677d5c2c3a19447
+# Parent  c9f07c69b1388db13a1d2cd85fb0a7a910027862
+(Merge 3.1) Issue #12012: ssl.PROTOCOL_SSLv2 becomes optional
+
+OpenSSL is now compiled with OPENSSL_NO_SSL2 defined (without the SSLv2
+protocol) on Debian: fix the ssl module on Debian Testing and Debian Sid.
+
+Optimize also ssl.get_protocol_name(): speed does matter!
+
+diff --git a/Doc/library/ssl.rst b/Doc/library/ssl.rst
+--- a/Doc/library/ssl.rst
++++ b/Doc/library/ssl.rst
+@@ -237,6 +237,9 @@ Functions, Constants, and Exceptions
+ 
+    Selects SSL version 2 as the channel encryption protocol.
+ 
++   This protocol is not available if OpenSSL is compiled with OPENSSL_NO_SSL2
++   flag.
++
+    .. warning::
+ 
+       SSL version 2 is insecure.  Its use is highly discouraged.
+diff --git a/Lib/ssl.py b/Lib/ssl.py
+--- a/Lib/ssl.py
++++ b/Lib/ssl.py
+@@ -62,7 +62,6 @@ import _ssl             # if we can't im
+ from _ssl import OPENSSL_VERSION_NUMBER, OPENSSL_VERSION_INFO, OPENSSL_VERSION
+ from _ssl import SSLError
+ from _ssl import CERT_NONE, CERT_OPTIONAL, CERT_REQUIRED
+-from _ssl import PROTOCOL_SSLv2, PROTOCOL_SSLv3, PROTOCOL_SSLv23, PROTOCOL_TLSv1
+ from _ssl import RAND_status, RAND_egd, RAND_add
+ from _ssl import \
+      SSL_ERROR_ZERO_RETURN, \
+@@ -74,6 +73,18 @@ from _ssl import \
+      SSL_ERROR_WANT_CONNECT, \
+      SSL_ERROR_EOF, \
+      SSL_ERROR_INVALID_ERROR_CODE
++from _ssl import PROTOCOL_SSLv3, PROTOCOL_SSLv23, PROTOCOL_TLSv1
++_PROTOCOL_NAMES = {
++    PROTOCOL_TLSv1: "TLSv1",
++    PROTOCOL_SSLv23: "SSLv23",
++    PROTOCOL_SSLv3: "SSLv3",
++}
++try:
++    from _ssl import PROTOCOL_SSLv2
++except ImportError:
++    pass
++else:
++    _PROTOCOL_NAMES[PROTOCOL_SSLv2] = "SSLv2"
+ 
+ from socket import socket, _fileobject, _delegate_methods, error as socket_error
+ from socket import getnameinfo as _getnameinfo
+@@ -425,16 +436,7 @@ def get_server_certificate(addr, ssl_ver
+     return DER_cert_to_PEM_cert(dercert)
+ 
+ def get_protocol_name(protocol_code):
+-    if protocol_code == PROTOCOL_TLSv1:
+-        return "TLSv1"
+-    elif protocol_code == PROTOCOL_SSLv23:
+-        return "SSLv23"
+-    elif protocol_code == PROTOCOL_SSLv2:
+-        return "SSLv2"
+-    elif protocol_code == PROTOCOL_SSLv3:
+-        return "SSLv3"
+-    else:
+-        return "<unknown>"
++    return _PROTOCOL_NAMES.get(protocol_code, '<unknown>')
+ 
+ 
+ # a replacement for the old socket.ssl function
+diff --git a/Lib/test/test_ssl.py b/Lib/test/test_ssl.py
+--- a/Lib/test/test_ssl.py
++++ b/Lib/test/test_ssl.py
+@@ -58,32 +58,35 @@ class BasicTests(unittest.TestCase):
+ 
+ # Issue #9415: Ubuntu hijacks their OpenSSL and forcefully disables SSLv2
+ def skip_if_broken_ubuntu_ssl(func):
+-    # We need to access the lower-level wrapper in order to create an
+-    # implicit SSL context without trying to connect or listen.
+-    try:
+-        import _ssl
+-    except ImportError:
+-        # The returned function won't get executed, just ignore the error
+-        pass
+-    @functools.wraps(func)
+-    def f(*args, **kwargs):
++    if hasattr(ssl, 'PROTOCOL_SSLv2'):
++        # We need to access the lower-level wrapper in order to create an
++        # implicit SSL context without trying to connect or listen.
+         try:
+-            s = socket.socket(socket.AF_INET)
+-            _ssl.sslwrap(s._sock, 0, None, None,
+-                         ssl.CERT_NONE, ssl.PROTOCOL_SSLv2, None, None)
+-        except ssl.SSLError as e:
+-            if (ssl.OPENSSL_VERSION_INFO == (0, 9, 8, 15, 15) and
+-                platform.linux_distribution() == ('debian', 'squeeze/sid', '')
+-                and 'Invalid SSL protocol variant specified' in str(e)):
+-                raise unittest.SkipTest("Patched Ubuntu OpenSSL breaks behaviour")
+-        return func(*args, **kwargs)
+-    return f
++            import _ssl
++        except ImportError:
++            # The returned function won't get executed, just ignore the error
++            pass
++        @functools.wraps(func)
++        def f(*args, **kwargs):
++            try:
++                s = socket.socket(socket.AF_INET)
++                _ssl.sslwrap(s._sock, 0, None, None,
++                             ssl.CERT_NONE, ssl.PROTOCOL_SSLv2, None, None)
++            except ssl.SSLError as e:
++                if (ssl.OPENSSL_VERSION_INFO == (0, 9, 8, 15, 15) and
++                    platform.linux_distribution() == ('debian', 'squeeze/sid', '')
++                    and 'Invalid SSL protocol variant specified' in str(e)):
++                    raise unittest.SkipTest("Patched Ubuntu OpenSSL breaks behaviour")
++            return func(*args, **kwargs)
++        return f
++    else:
++        return func
+ 
+ 
+ class BasicSocketTests(unittest.TestCase):
+ 
+     def test_constants(self):
+-        ssl.PROTOCOL_SSLv2
++        #ssl.PROTOCOL_SSLv2
+         ssl.PROTOCOL_SSLv23
+         ssl.PROTOCOL_SSLv3
+         ssl.PROTOCOL_TLSv1
+@@ -1008,7 +1011,8 @@ else:
+             try_protocol_combo(ssl.PROTOCOL_SSLv3, ssl.PROTOCOL_SSLv3, True)
+             try_protocol_combo(ssl.PROTOCOL_SSLv3, ssl.PROTOCOL_SSLv3, True, ssl.CERT_OPTIONAL)
+             try_protocol_combo(ssl.PROTOCOL_SSLv3, ssl.PROTOCOL_SSLv3, True, ssl.CERT_REQUIRED)
+-            try_protocol_combo(ssl.PROTOCOL_SSLv3, ssl.PROTOCOL_SSLv2, False)
++            if hasattr(ssl, 'PROTOCOL_SSLv2'):
++                try_protocol_combo(ssl.PROTOCOL_SSLv3, ssl.PROTOCOL_SSLv2, False)
+             try_protocol_combo(ssl.PROTOCOL_SSLv3, ssl.PROTOCOL_SSLv23, False)
+             try_protocol_combo(ssl.PROTOCOL_SSLv3, ssl.PROTOCOL_TLSv1, False)
+ 
+@@ -1020,7 +1024,8 @@ else:
+             try_protocol_combo(ssl.PROTOCOL_TLSv1, ssl.PROTOCOL_TLSv1, True)
+             try_protocol_combo(ssl.PROTOCOL_TLSv1, ssl.PROTOCOL_TLSv1, True, ssl.CERT_OPTIONAL)
+             try_protocol_combo(ssl.PROTOCOL_TLSv1, ssl.PROTOCOL_TLSv1, True, ssl.CERT_REQUIRED)
+-            try_protocol_combo(ssl.PROTOCOL_TLSv1, ssl.PROTOCOL_SSLv2, False)
++            if hasattr(ssl, 'PROTOCOL_SSLv2'):
++                try_protocol_combo(ssl.PROTOCOL_TLSv1, ssl.PROTOCOL_SSLv2, False)
+             try_protocol_combo(ssl.PROTOCOL_TLSv1, ssl.PROTOCOL_SSLv3, False)
+             try_protocol_combo(ssl.PROTOCOL_TLSv1, ssl.PROTOCOL_SSLv23, False)
+ 
+diff --git a/Misc/NEWS b/Misc/NEWS
+--- a/Misc/NEWS
++++ b/Misc/NEWS
+@@ -80,6 +80,8 @@ Core and Builtins
+ Library
+ -------
+ 
++- Issue #12012: ssl.PROTOCOL_SSLv2 becomes optional.
++
+ - Issue #11164: Remove obsolete allnodes test from minidom test.
+ 
+ - Issue #11927: SMTP_SSL now uses port 465 by default as documented.  Patch
+diff --git a/Modules/_ssl.c b/Modules/_ssl.c
+--- a/Modules/_ssl.c
++++ b/Modules/_ssl.c
+@@ -62,8 +62,10 @@ enum py_ssl_cert_requirements {
+ };
+ 
+ enum py_ssl_version {
++#ifndef OPENSSL_NO_SSL2
+     PY_SSL_VERSION_SSL2,
+-    PY_SSL_VERSION_SSL3,
++#endif
++    PY_SSL_VERSION_SSL3=1,
+     PY_SSL_VERSION_SSL23,
+     PY_SSL_VERSION_TLS1
+ };
+@@ -302,8 +304,10 @@ newPySSLObject(PySocketSockObject *Sock,
+         self->ctx = SSL_CTX_new(TLSv1_method()); /* Set up context */
+     else if (proto_version == PY_SSL_VERSION_SSL3)
+         self->ctx = SSL_CTX_new(SSLv3_method()); /* Set up context */
++#ifndef OPENSSL_NO_SSL2
+     else if (proto_version == PY_SSL_VERSION_SSL2)
+         self->ctx = SSL_CTX_new(SSLv2_method()); /* Set up context */
++#endif
+     else if (proto_version == PY_SSL_VERSION_SSL23)
+         self->ctx = SSL_CTX_new(SSLv23_method()); /* Set up context */
+     PySSL_END_ALLOW_THREADS
+@@ -1708,8 +1712,10 @@ init_ssl(void)
+                             PY_SSL_CERT_REQUIRED);
+ 
+     /* protocol versions */
++#ifndef OPENSSL_NO_SSL2
+     PyModule_AddIntConstant(m, "PROTOCOL_SSLv2",
+                             PY_SSL_VERSION_SSL2);
++#endif
+     PyModule_AddIntConstant(m, "PROTOCOL_SSLv3",
+                             PY_SSL_VERSION_SSL3);
+     PyModule_AddIntConstant(m, "PROTOCOL_SSLv23",

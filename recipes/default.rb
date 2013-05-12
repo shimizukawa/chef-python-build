@@ -30,7 +30,10 @@ node.python_build.versions.each do |version|
     group node.python_build.group
   end
 
-  node.python_build.packages.each do |package|
+  packages = node.python_build.packages[0..-1]
+  packages << 'ssl' if version < '2.6'
+  packages.uniq!
+  packages.each do |package|
     python_package package do
       python_version version
       python_prefix  node.python_build.install_prefix

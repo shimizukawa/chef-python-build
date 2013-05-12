@@ -55,6 +55,23 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
       notifies :run, "execute[configure-python-#{version}]"
     end
 
+    cookbook_file "#{archive_dir}/Python-#{version}/py26-no-sslv2.patch" do
+      action :create
+      owner owner
+      group group
+      mode "0644"
+      not_if {version[0..3] != '2.6' && expected_python.call(install_target, version)}
+    end
+
+    execute "patch py26-no-sslv2.patch to #{archive_dir}/Python-#{version}" do
+      cwd "#{archive_dir}/Python-#{version}"
+      command "patch -p1 < py26-no-sslv2.patch"
+      returns [0, 1]
+      user owner
+      group group
+      not_if {version[0..3] != '2.6' && expected_python.call(install_target, version)}
+    end
+
     execute "configure-python-#{version}" do
       #action :nothing
       cwd "#{archive_dir}/Python-#{version}"
