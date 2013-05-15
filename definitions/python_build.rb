@@ -56,7 +56,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
       owner owner
       group group
       mode "0644"
-      not_if {version[0..3] != '2.6' && expected_python.call(install_target, version)}
+      not_if {version[0..3] != '2.6' || expected_python.call(install_target, version)}
     end
 
     execute "patch py26-no-sslv2.patch to #{archive_dir}/Python-#{version}" do
@@ -65,7 +65,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
       returns [0, 1]
       user owner
       group group
-      not_if {version[0..3] != '2.6' && expected_python.call(install_target, version)}
+      not_if {version[0..3] != '2.6' || expected_python.call(install_target, version)}
     end
 
     execute "configure-python-#{version}" do
