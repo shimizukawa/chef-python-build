@@ -57,6 +57,12 @@ Attributes
     <td>Install file/directory group.</td>
     <td><tt>"root"</tt></td>
   </tr>
+  <tr>
+    <td><tt>["python_build"]["find_links"]</tt></td>
+    <td>string</td>
+    <td>list of package urls for easy_install -f</td>
+    <td><tt>[]</tt></td>
+  </tr>
 </table>
 
 Usage

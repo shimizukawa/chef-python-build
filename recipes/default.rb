@@ -38,6 +38,7 @@ node.python_build.versions.each do |version|
       python_prefix  node.python_build.install_prefix
       owner node.python_build.owner
       group node.python_build.group
+      find_links node.python_build.find_links
     end
   end
 end

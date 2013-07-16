@@ -21,6 +21,7 @@ default["python_build"]["versions"] = []
 default["python_build"]["packages"] = []
 default["python_build"]["owner"] = "root"
 default["python_build"]["group"] = "root"
+default["python_build"]["find_links"] = []
 
 case node["platform_family"]
 when "debian"

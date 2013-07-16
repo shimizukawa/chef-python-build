@@ -1,5 +1,5 @@
 
-define :python_package, :action => :install, :python_version => nil, :python_prefix => '/usr/local', :owner => 'root', :group => 'group' do
+define :python_package, :action => :install, :python_version => nil, :python_prefix => '/usr/local', :owner => 'root', :group => 'group', :find_links => [] do
   package = params[:name]
   owner = params[:owner]
   group = params[:group]
@@ -12,6 +12,7 @@ define :python_package, :action => :install, :python_version => nil, :python_pre
     easy_install += "-#{major_version}"
   end
   easy_install_bin = "#{python_prefix}/bin/#{easy_install}"
+  find_links_opt = params[:find_links].map{|url| "-f #{url}"}.join(' ')
 
   case params[:action]
   when :install
@@ -32,7 +33,7 @@ define :python_package, :action => :install, :python_version => nil, :python_pre
     end
 
     execute "#{easy_install} #{package}" do
-      command "#{easy_install_bin} #{package}"
+      command "#{easy_install_bin} #{find_links_opt} #{package}"
       user owner
       group group
     end
