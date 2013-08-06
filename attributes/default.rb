@@ -26,7 +26,7 @@ default["python_build"]["find_links"] = []
 case node["platform_family"]
 when "debian"
   default["python_build"]["depends_libraries"] = [
-    'openssl',
+    'libssl-dev',
     'libsqlite3-dev',
     'libreadline6-dev',
     'libgdbm-dev',
