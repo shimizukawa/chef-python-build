@@ -42,7 +42,7 @@ Attributes
   <tr>
     <td><tt>["python_build"]["packages"]</tt></td>
     <td>string</td>
-    <td>Install python 3rd-party package list. "distribute" will install by default. BTW distribute did not support Python-3.0 then this feature did not work when specify '3.0.x' in versions.</td>
+    <td>Install python 3rd-party package list. "setuptools" will install by default. BTW setuptools did not support Python-3.0 then this feature did not work when specify '3.0.x' in versions.</td>
     <td><tt>[]</tt></td>
   </tr>
   <tr>
