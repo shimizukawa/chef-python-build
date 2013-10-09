@@ -27,17 +27,20 @@ case node["platform_family"]
 when "debian"
   default["python_build"]["depends_libraries"] = [
     'libssl-dev',
-    'libsqlite3-dev',
-    'libreadline6-dev',
+    'libsqlite3-dev',    #'libsqlite-dev',
+    'libreadline6-dev',  #'libreadline-dev',
     'libgdbm-dev',
     'zlib1g-dev',
     'libbz2-dev',
+    'tk-dev',
+    'libdb-dev',
+    'libncurses-dev',
+    'liblzma-dev',
     'sqlite3',
     'libjpeg62-dev',
     'libfreetype6-dev',
   ]
 
-#TODO: tk-dev  # not found on ubuntu-12.04?
 #TODO: lxml
 #TODO: mod_wsgi
 
@@ -48,6 +51,10 @@ when "rhel", "fedora", "suse"
     'readline-devel',
     'zlib-devel',
     'bzip2-devel',
+    #'tk-dev',         #this is ubuntu package name. Find for RHEL.
+    #'libdb-dev',      #this is ubuntu package name. Find for RHEL.
+    #'libncurses-dev', #this is ubuntu package name. Find for RHEL.
+    #'liblzma-dev',    #this is ubuntu package name. Find for RHEL.
     'libjpeg-devel',
     'freetype-devel',
     #'sqlite3', #what package name on centos? and is this need?
