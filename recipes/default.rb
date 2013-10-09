@@ -30,7 +30,7 @@ node.python_build.versions.each do |version|
     group node.python_build.group
   end
 
-  packages = node.python_build.packages[0..-1]
+  packages = Array(node.python_build.packages)
   packages << 'ssl' if version < '2.6'
   packages.each do |package|
     python_package package do
