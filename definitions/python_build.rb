@@ -4,7 +4,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
   owner = params[:owner]
   group = params[:group]
   archive_dir = Chef::Config[:file_cache_path]
-  archive_file = "Python-#{version}.tar.bz2"
+  archive_file = node["python_build"]["archive_file"] || "Python-#{version}.tgz"
   if node["python_build"]["archive_url_base"]
     archive_src = "#{node["python_build"]["archive_url_base"]}/#{archive_file}"
   else
@@ -13,6 +13,9 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
 
   install_prefix = params[:install_prefix]
   install_target = "#{install_prefix}/bin/python#{version.split('.')[0,2].join('.')}"
+
+  extract_command = BuildHelper.make_extract_command(archive_file)
+  extract_path = "#{archive_dir}/#{BuildHelper.extract_name(archive_file)}"
 
   expected_python = Proc.new{|target, expected_version|
     if File.exists?(target)
@@ -45,13 +48,13 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
 
     execute "extract-python-#{version}" do
       cwd archive_dir
-      command "tar jxf #{archive_file}"
+      command extract_command
       user owner
       group group
-      not_if {File.exists?("#{archive_dir}/Python-#{version}") || expected_python.call(install_target, version)}
+      not_if {File.exists?(extract_path) || expected_python.call(install_target, version)}
     end
 
-    cookbook_file "#{archive_dir}/Python-#{version}/py26-no-sslv2.patch" do
+    cookbook_file "#{extract_path}/py26-no-sslv2.patch" do
       action :create
       owner owner
       group group
@@ -59,8 +62,8 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
       not_if {version[0,3] != '2.6' || expected_python.call(install_target, version)}
     end
 
-    execute "patch py26-no-sslv2.patch to #{archive_dir}/Python-#{version}" do
-      cwd "#{archive_dir}/Python-#{version}"
+    execute "patch py26-no-sslv2.patch to #{extract_path}" do
+      cwd extract_path
       command "patch -p1 < py26-no-sslv2.patch"
       returns [0, 1]
       user owner
@@ -69,16 +72,16 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
     end
 
     execute "configure-python-#{version}" do
-      cwd "#{archive_dir}/Python-#{version}"
+      cwd extract_path
       command "./configure --prefix=#{install_prefix}"
       user owner
       group group
-      not_if {File.exists?("#{archive_dir}/Python-#{version}/Makefile") || expected_python.call(install_target, version)}
+      not_if {File.exists?("#{extract_path}/Makefile") || expected_python.call(install_target, version)}
     end
 
     template "place-python-#{version}-setup.cfg" do
       action :create
-      path "#{archive_dir}/Python-#{version}/setup.cfg"
+      path "#{extract_path}/setup.cfg"
       source 'setup.cfg.erb'
       owner owner
       group group
@@ -86,7 +89,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
     end
 
     execute "make-python-#{version}" do
-      cwd "#{archive_dir}/Python-#{version}"
+      cwd extract_path
       command "make"
       user owner
       group group
@@ -94,7 +97,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
     end
 
     execute "make-install-python-#{version}" do
-      cwd "#{archive_dir}/Python-#{version}"
+      cwd extract_path
       command "make install"
       user owner
       group group

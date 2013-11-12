@@ -15,7 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-default["python_build"]["archive_url_base"] = nil
+default["python_build"]["archive_url_base"] = nil  #"http://python.org/ftp/python/{version}/"
+default["python_build"]["archive_file"] = nil      #"Python-#{version}.tgz"
 default["python_build"]["install_prefix"] = '/usr/local'
 default["python_build"]["versions"] = []
 default["python_build"]["packages"] = []
