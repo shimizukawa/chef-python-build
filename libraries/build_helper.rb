@@ -18,6 +18,8 @@
 # limitations under the License.
 #
 
+require 'open-uri'
+
 EXT_TYPE_CMD = {
   '.tar' => ['tar', 'xf'],
   '.tgz' => ['tar', 'zxf'],
@@ -56,6 +58,28 @@ class BuildHelper
       end
     end
     path[0..-File::extname(path).length]  #fall-back for unknown extension.
+  end
+
+
+  def self.expected_python(target, expected_version)
+    if File.exists?(target)
+      actual_version = IO.popen("#{target} -V 2>&1", "w+") {|f| f.read}.split.last
+      actual_version == expected_version
+    else
+      false
+    end
+  end
+
+  def self.download(archive_src, archive_dest)
+    unless File.exists?(archive_dest)
+      open(archive_src, 'rb') do |input|
+        open(archive_dest, 'wb') do |output|
+          while data = input.read(8192) do
+            output.write(data)
+          end
+        end
+      end
+    end
   end
 
 end
