@@ -8,7 +8,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
   if node["python_build"]["archive_url_base"]
     archive_src = "#{node["python_build"]["archive_url_base"]}/#{archive_file}"
   else
-    archive_src = "http://www.python.org/ftp/python/#{version}/#{archive_file}"
+    archive_src = "https://www.python.org/ftp/python/#{version}/#{archive_file}"
   end
 
   install_prefix = params[:install_prefix]
