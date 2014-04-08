@@ -86,5 +86,9 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :confi
       not_if {BuildHelper.expected_python(install_target, version)}
     end
 
+    execute "ldconfig-python-#{version}" do
+      command "ldconfig"
+    end
+
   end
 end
