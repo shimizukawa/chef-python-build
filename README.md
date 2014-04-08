@@ -28,6 +28,12 @@ Attributes
     <td><tt>nil</tt></td>
   </tr>
   <tr>
+    <td><tt>["python_build"]["configure_options"]</tt></td>
+    <td>array</td>
+    <td>configure options</td>
+    <td><tt>['--enable-shared']</tt></td>
+  </tr>
+  <tr>
     <td><tt>["python_build"]["install_prefix"]</tt></td>
     <td>string</td>
     <td>Install path prefix</td>

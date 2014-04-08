@@ -1,8 +1,9 @@
 
-define :python_build, :action => :build, :install_prefix => '/usr/local', :owner => 'root', :group => 'group' do
+define :python_build, :action => :build, :install_prefix => '/usr/local', :configure_options => [], :owner => 'root', :group => 'group' do
   version = params[:name]
   owner = params[:owner]
   group = params[:group]
+  configure_options = params[:configure_options]
   archive_dir = Chef::Config[:file_cache_path]
   archive_file = node["python_build"]["archive_file"] || "Python-#{version}.tgz"
   if node["python_build"]["archive_url_base"]
@@ -54,7 +55,7 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :owner
 
     execute "configure-python-#{version}" do
       cwd extract_path
-      command "./configure --prefix=#{install_prefix}"
+      command "./configure --prefix=#{install_prefix} #{configure_options.join(' ')}"
       user owner
       group group
       not_if {File.exists?("#{extract_path}/Makefile") || BuildHelper.expected_python(install_target, version)}

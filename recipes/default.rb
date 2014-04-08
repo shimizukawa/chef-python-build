@@ -25,6 +25,7 @@ end
 node.python_build.versions.each do |version|
   python_build version do
     version
+    configure_options node.python_build.configure_options
     install_prefix node.python_build.install_prefix
     owner node.python_build.owner
     group node.python_build.group
