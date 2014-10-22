@@ -86,6 +86,16 @@ define :python_build, :action => :build, :install_prefix => '/usr/local', :confi
       not_if {BuildHelper.expected_python(install_target, version)}
     end
 
+    case node["platform_family"]
+    when "rhel", "fedora", "suse"
+      file "/etc/ld.so.conf.d/python.conf" do
+        content "#{install_prefix}/lib"
+        user owner
+        group group
+        mode "644"
+      end
+    end
+
     execute "ldconfig-python-#{version}" do
       command "ldconfig"
     end
